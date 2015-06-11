@@ -254,6 +254,8 @@
           // Call the update.
           update();
 
+            // handle queued messages 
+          connection.setActive(true);
           // Return the data to finish the connection.
           return data;
         });

@@ -178,7 +178,8 @@
     // Set the seamless_options in the iframe.
     iframe.seamless_options = options;
 
-    // Add this to the global seamless frames object.
+    // Add this to the global seamless frames object, but not twice [reset connection as well]
+    seamlessFrames = $.grep(seamlessFrames, function(a) { return a[0] !== iframe[0]; });
     seamlessFrames.push(iframe);
 
     // Get the name of the iframe.
@@ -223,7 +224,8 @@
       loading.css({
         background: 'url(' + options.spinner + ') no-repeat 10px 13px',
         padding: '10px 10px 10px 60px',
-        width: '100%'
+        width: '100%',
+	display: "none"
       });
 
       // Append the text.
@@ -354,6 +356,12 @@
         );
       });
 
+      // If nothing happens after .5 seconds, show loading message.
+      setTimeout(function () {
+          if (isLoading) {
+              loading.show();
+          }
+      }, 500);
       // If nothing happens after 30 seconds, then assume something went wrong.
       setTimeout(function() {
         if (isLoading) {

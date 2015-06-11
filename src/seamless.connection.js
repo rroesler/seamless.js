@@ -21,11 +21,13 @@
    */
   $.SeamlessConnection.prototype.send = function(pm) {
 
-    // Only send if the target is set.
-    if (this.active && this.target) {
+    // Make sure the pm is at least always an object.
+    pm = pm || {};
 
-      // Make sure the pm is at least always an object.
-      pm = pm || {};
+    // Only send if the target is set.
+    var can_send = this.id || pm.type == "seamless_ready";
+      
+    if (this.active && this.target && can_send) {
 
       // Normalize the data.
       if (!pm.hasOwnProperty('data')) {
