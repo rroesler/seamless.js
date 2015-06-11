@@ -583,11 +583,13 @@ if (! ("JSON" in window && window.JSON)){JSON={}}(function(){function f(n){retur
    */
   $.SeamlessConnection.prototype.send = function(pm) {
 
-    // Only send if the target is set.
-    if (this.active && this.target) {
+    // Make sure the pm is at least always an object.
+    pm = pm || {};
 
-      // Make sure the pm is at least always an object.
-      pm = pm || {};
+    // Only send if the target is set.
+    var can_send = this.id || pm.type == "seamless_ready";
+      
+    if (this.active && this.target && can_send) {
 
       // Normalize the data.
       if (!pm.hasOwnProperty('data')) {
@@ -834,7 +836,8 @@ if (! ("JSON" in window && window.JSON)){JSON={}}(function(){function f(n){retur
     // Set the seamless_options in the iframe.
     iframe.seamless_options = options;
 
-    // Add this to the global seamless frames object.
+    // Add this to the global seamless frames object, but not twice [reset connection as well]
+    seamlessFrames = $.grep(seamlessFrames, function(a) { return a[0] !== iframe[0]; });
     seamlessFrames.push(iframe);
 
     // Get the name of the iframe.
@@ -879,7 +882,8 @@ if (! ("JSON" in window && window.JSON)){JSON={}}(function(){function f(n){retur
       loading.css({
         background: 'url(' + options.spinner + ') no-repeat 10px 13px',
         padding: '10px 10px 10px 60px',
-        width: '100%'
+        width: '100%',
+	display: "none"
       });
 
       // Append the text.
@@ -1010,6 +1014,12 @@ if (! ("JSON" in window && window.JSON)){JSON={}}(function(){function f(n){retur
         );
       });
 
+      // If nothing happens after .5 seconds, show loading message.
+      setTimeout(function () {
+          if (isLoading) {
+              loading.show();
+          }
+      }, 500);
       // If nothing happens after 30 seconds, then assume something went wrong.
       setTimeout(function() {
         if (isLoading) {
