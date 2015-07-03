@@ -245,6 +245,13 @@
       }
     };
 
+    // If nothing happens after 1.5 seconds, show loading message.
+    setTimeout(function () {
+          if (isLoading) {
+              loading.show();
+          }
+      }, 1500);
+
     // If they wish to have a fallback.
     if (options.fallback) {
 
@@ -356,12 +363,6 @@
         );
       });
 
-      // If nothing happens after .5 seconds, show loading message.
-      setTimeout(function () {
-          if (isLoading) {
-              loading.show();
-          }
-      }, 500);
       // If nothing happens after 30 seconds, then assume something went wrong.
       setTimeout(function() {
         if (isLoading) {
